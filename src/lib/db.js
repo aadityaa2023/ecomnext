@@ -6,9 +6,9 @@ if (!cached) {
 }
 
 async function connectDB() {
-  const MONGO_URI = process.env.MONGO_URI;
+  const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!MONGO_URI) {
-    throw new Error('Please define the MONGO_URI environment variable in .env.local');
+    throw new Error('Please define the MONGO_URI or MONGODB_URI environment variable in .env.local');
   }
 
   if (cached.conn) {
@@ -20,9 +20,9 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGO_URI, opts).then((mongoose) => {
-      console.log('✅ MongoDB Connected');
-      return mongoose;
+    cached.promise = mongoose.connect(MONGO_URI, opts).then((mongooseInstance) => {
+      console.log(`✅ MongoDB Connected successfully! (Host: ${mongooseInstance.connection.host}, Database: ${mongooseInstance.connection.name})`);
+      return mongooseInstance;
     });
   }
 
@@ -30,6 +30,7 @@ async function connectDB() {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    console.error(`❌ MongoDB Connection Error: ${e.message}`);
     throw e;
   }
 

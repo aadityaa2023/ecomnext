@@ -11,7 +11,7 @@ dotenv.config({ path: '.env.local' });
 const adminData = {
   name: 'Admin User',
   email: process.env.ADMIN_EMAIL || 'admin@gmail.com',
-  password: 'password123',
+  password: 'admin@123',
   role: 'admin',
 };
 
